@@ -1,0 +1,23 @@
+{
+  "name": "exchange-a-gram",
+  "version": "1.0.0",
+  "description": "Share your photos with your friends, but instantaneously",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server -c-1"
+  },
+  "keywords": [
+    "pwa",
+    "progressive",
+    "web",
+    "app",
+    "instantaneous",
+    "photos",
+    "exchange"
+  ],
+  "author": "Zak Warren",
+  "license": "ISC",
+  "devDependencies": {
+    "http-server": "^0.9.0"
+  }
+}
