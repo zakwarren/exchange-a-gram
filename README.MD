@@ -1,6 +1,6 @@
 # Exchange-a-gram
 
-Share your photos with your friends, but instantaneously.
+Share your photos with your friends on the line, but instantaneously.
 
 # How to Use
 You need [Node.js](https://nodejs.org) installed on your machine.
