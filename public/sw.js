@@ -1,5 +1,5 @@
-var CACHE_STATIC_NAME = 'static-v3';
-var CACHE_DYNAMIC_NAME = 'dynamic-v2';
+var CACHE_STATIC_NAME = 'static-v4';
+var CACHE_DYNAMIC_NAME = 'dynamic-v3';
 
 self.addEventListener('install', function(event) {
     console.log('[Service worker] Installing Service Worker...', event);
@@ -10,6 +10,7 @@ self.addEventListener('install', function(event) {
                 cache.addAll([
                     '/',
                     '/index.html',
+                    '/offline.html',
                     '/src/js/app.js',
                     '/src/js/feed.js',
                     '/src/js/promise.js',
@@ -53,11 +54,16 @@ self.addEventListener('fetch', function(event) {
                         .then(function(res) {
                             return caches.open(CACHE_DYNAMIC_NAME)
                                 .then(function(cache) {
-                                    //cache.put(event.request.url, res.clone());
+                                    cache.put(event.request.url, res.clone());
                                     return res;
                                 });
                         })
-                        .catch(function(err) {});
+                        .catch(function(err) {
+                            return caches.open(CACHE_STATIC_NAME)
+                                .then(function(cache) {
+                                    return cache.match('/offline.html');
+                                })
+                        });
                 }
             })
     );
