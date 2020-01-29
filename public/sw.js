@@ -1,5 +1,21 @@
 var CACHE_STATIC_NAME = 'static-v4';
 var CACHE_DYNAMIC_NAME = 'dynamic-v4';
+var STATIC_FILES = [
+    '/',
+    '/index.html',
+    '/offline.html',
+    '/src/js/app.js',
+    '/src/js/feed.js',
+    '/src/js/promise.js',
+    '/src/js/fetch.js',
+    '/src/js/material.min.js',
+    '/src/css/app.css',
+    '/src/css/feed.css',
+    '/src/images/main-image.jpg',
+    'https://fonts.googleapis.com/css?family=Roboto:400,700',
+    'https://fonts.googleapis.com/icon?family=Material+Icons',
+    'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
+];
 
 self.addEventListener('install', function(event) {
     console.log('[Service worker] Installing Service Worker...', event);
@@ -7,22 +23,7 @@ self.addEventListener('install', function(event) {
         caches.open(CACHE_STATIC_NAME)
             .then(function(cache) {
                 console.log('[Service worker] Pre-caching app shell');
-                cache.addAll([
-                    '/',
-                    '/index.html',
-                    '/offline.html',
-                    '/src/js/app.js',
-                    '/src/js/feed.js',
-                    '/src/js/promise.js',
-                    '/src/js/fetch.js',
-                    '/src/js/material.min.js',
-                    '/src/css/app.css',
-                    '/src/css/feed.css',
-                    '/src/images/main-image.jpg',
-                    'https://fonts.googleapis.com/css?family=Roboto:400,700',
-                    'https://fonts.googleapis.com/icon?family=Material+Icons',
-                    'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
-                ]);
+                cache.addAll(STATIC_FILES);
             })
     );
 });
@@ -60,6 +61,16 @@ self.addEventListener('fetch', function(event) {
                             return res;
                         });
                 })
+        );
+    } else if (new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
+        // cache only strategy
+        // only if request url is one of the static file urls
+        // cache is refreshed on installation of a new version of the service worker
+        // so need to remember to update the cache version numbers here
+        // when updating any of the cached files
+        // doesn't have a fallback so may have issues
+        event.respondWith(
+            caches.match(event.request)
         );
     } else {
         // cache with network fallback strategy
