@@ -1,5 +1,5 @@
 var CACHE_STATIC_NAME = 'static-v4';
-var CACHE_DYNAMIC_NAME = 'dynamic-v3';
+var CACHE_DYNAMIC_NAME = 'dynamic-v4';
 
 self.addEventListener('install', function(event) {
     console.log('[Service worker] Installing Service Worker...', event);
@@ -44,27 +44,51 @@ self.addEventListener('activate', function(event) {
 });
 
 self.addEventListener('fetch', function(event) {
-    event.respondWith(
-        caches.match(event.request)
-            .then(function(response) {
-                if (response) {
-                    return response;
-                } else {
+    var url = 'https://httpbin.org/get';
+
+    if (event.request.url.indexOf(url) > -1) {
+        // cache then network strategy
+        // for regularly updated responses
+        // uses cache if offline and for speed
+        // but prefers network and updates cache
+        event.respondWith(
+            caches.open(CACHE_DYNAMIC_NAME)
+                .then(function(cache) {
                     return fetch(event.request)
                         .then(function(res) {
-                            return caches.open(CACHE_DYNAMIC_NAME)
-                                .then(function(cache) {
-                                    cache.put(event.request.url, res.clone());
-                                    return res;
-                                });
-                        })
-                        .catch(function(err) {
-                            return caches.open(CACHE_STATIC_NAME)
-                                .then(function(cache) {
-                                    return cache.match('/offline.html');
-                                })
+                            cache.put(event.request, res.clone());
+                            return res;
                         });
-                }
-            })
-    );
+                })
+        );
+    } else {
+        // cache with network fallback strategy
+        // for responses that don't update regularly
+        // uses cache if available, falling back to network
+        // to cache responses the first time (or when service worker updated)
+        event.respondWith(
+            caches.match(event.request)
+                .then(function(response) {
+                    if (response) {
+                        return response;
+                    } else {
+                        return fetch(event.request)
+                            .then(function(res) {
+                                return caches.open(CACHE_DYNAMIC_NAME)
+                                    .then(function(cache) {
+                                        cache.put(event.request.url, res.clone());
+                                        return res;
+                                    });
+                            })
+                            .catch(function(err) {
+                                return caches.open(CACHE_STATIC_NAME)
+                                    .then(function(cache) {
+                                        return cache.match('/offline.html');
+                                    })
+                            });
+                    }
+                })
+        );
+    }
+    
 });
