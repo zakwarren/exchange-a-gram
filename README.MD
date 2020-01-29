@@ -24,3 +24,4 @@ application.
 5. Precache other assets required to make the root index.html file work
 6. Set up versioning and clean up of caches so new files get loaded and cached
 7. Add dynamic caching (with versioning) to cache everything in your app when visited / fetched by the user
+8. Add differential caching strategies for different routes
