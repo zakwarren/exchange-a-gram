@@ -1,5 +1,5 @@
-var CACHE_STATIC_NAME = 'static-v4';
-var CACHE_DYNAMIC_NAME = 'dynamic-v4';
+var CACHE_STATIC_NAME = 'static-v5';
+var CACHE_DYNAMIC_NAME = 'dynamic-v5';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -44,6 +44,15 @@ self.addEventListener('activate', function(event) {
     return self.clients.claim();
 });
 
+function isInArray(string, array) {
+    for (var i = 0; i < array.length; i++) {
+        if (array[i] === string) {
+            return true;
+        }
+    }
+    return false;
+}
+
 self.addEventListener('fetch', function(event) {
     var url = 'https://httpbin.org/get';
 
@@ -62,7 +71,7 @@ self.addEventListener('fetch', function(event) {
                         });
                 })
         );
-    } else if (new RegExp('\\b' + STATIC_FILES.join('\\b|\\b') + '\\b').test(event.request.url)) {
+    } else if (isInArray(event.request.url, STATIC_FILES)) {
         // cache only strategy
         // only if request url is one of the static file urls
         // cache is refreshed on installation of a new version of the service worker
