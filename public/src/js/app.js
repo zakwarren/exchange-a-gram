@@ -15,6 +15,17 @@ if ('serviceWorker' in navigator) {
             });
 }
 
+// function unregisterSW() {
+//     if ('serviceWorker' in navigator) {
+//         navigator.serviceWorker.getRegistrations()
+//             .then(function(registrations) {
+//                 for (var i = 0; i < registrations.length; i++) {
+//                     registrations[i].unregister();
+//                 }
+//             });
+//     }
+// }
+
 window.addEventListener('beforeinstallprompt', function(event) {
     console.log('beforeinstallprompt fired');
     event.preventDefault();
