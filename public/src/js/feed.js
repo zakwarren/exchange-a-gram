@@ -106,18 +106,12 @@ fetch(url)
         updateUI(dataArray);
     });
 
-if ('caches' in window) {
-    caches.match(url)
-        .then(function(response) {
-            if (response) {
-                return response.json();
-            }
-        })
+if ('indexedDB' in window) {
+    readAllData('posts')
         .then(function(data) {
-            console.log('From cache:', data);
-            if (!networkDataReceived && data) {
-                var dataArray = getArrayFromObject(data);
-                updateUI(dataArray);
+            if (!networkDataReceived) {
+                console.log('From indexedDB:', data);
+                updateUI(data);
             }
-        })
+        });
 }
