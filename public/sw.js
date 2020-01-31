@@ -1,5 +1,6 @@
 
 importScripts('/src/js/idb.js');
+importScripts('/src/js/utility.js');
 
 var CACHE_STATIC_NAME = 'static-v6';
 var CACHE_DYNAMIC_NAME = 'dynamic-v6';
@@ -20,12 +21,6 @@ var STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
-
-var dbPromise = idb.open('post-store', 1, function(db) {
-    if (!db.objectStoreNames.contains('posts')) {
-        db.createObjectStore('posts', { keyPath: 'id' });
-    }
-});
 
 // var CACHE_LIMIT = 10;
 // function trimCache(cacheName, maxItems) {
@@ -92,15 +87,9 @@ self.addEventListener('fetch', function(event) {
                     var clonedRes = res.clone();
                     clonedRes.json()
                         .then(function(data) {
-                            dbPromise
-                                .then(function(db) {
-                                    var tx = db.transaction('posts', 'readwrite');
-                                    var store = tx.objectStore('posts');
-                                    for (var key in data) {
-                                        store.put(data[key]);
-                                    }
-                                    return tx.complete;
-                                });
+                            for (var key in data) {
+                                writeData('posts', data[key]);
+                            }
                         });
                     return res;
                 })
