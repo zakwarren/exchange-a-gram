@@ -21,6 +21,12 @@ var STATIC_FILES = [
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
 
+var dbPromise = idb.open('post-store', 1, function(db) {
+    if (!db.objectStoreNames.contains('posts')) {
+        db.createObjectStore('posts', { keyPath: 'id' });
+    }
+});
+
 // var CACHE_LIMIT = 10;
 // function trimCache(cacheName, maxItems) {
 //     caches.open(cacheName)
@@ -77,19 +83,26 @@ self.addEventListener('fetch', function(event) {
     var url = 'https://exchange-a-gram-a9533.firebaseio.com/posts.json';
 
     if (event.request.url.indexOf(url) > -1) {
-        // cache then network strategy
-        // for regularly updated responses
-        // uses cache if offline and for speed
-        // but prefers network and updates cache
+        // indexedDB for post requests
+        // get data from network then store it in indexedDB
+        // for faster recall and offline support
         event.respondWith(
-            caches.open(CACHE_DYNAMIC_NAME)
-                .then(function(cache) {
-                    return fetch(event.request)
-                        .then(function(res) {
-                            // trimCache(CACHE_DYNAMIC_NAME, CACHE_LIMIT);
-                            cache.put(event.request, res.clone());
-                            return res;
+            fetch(event.request)
+                .then(function(res) {
+                    var clonedRes = res.clone();
+                    clonedRes.json()
+                        .then(function(data) {
+                            dbPromise
+                                .then(function(db) {
+                                    var tx = db.transaction('posts', 'readwrite');
+                                    var store = tx.objectStore('posts');
+                                    for (var key in data) {
+                                        store.put(data[key]);
+                                    }
+                                    return tx.complete;
+                                });
                         });
+                    return res;
                 })
         );
     } else if (isInArray(event.request.url, STATIC_FILES)) {
