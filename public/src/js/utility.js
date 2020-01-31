@@ -32,3 +32,13 @@ function clearAllData(storeName) {
             return tx.complete;
         });
 }
+
+function deleteItemFromData(storeName, id) {
+    return dbPromise
+        .then(function(db) {
+            var tx = db.transaction(storeName, 'readwrite');
+            var store = tx.objectStore(storeName);
+            store.delete(id);
+            return tx.complete;
+        });
+}
