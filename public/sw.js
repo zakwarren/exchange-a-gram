@@ -62,7 +62,6 @@ self.addEventListener('activate', function(event) {
 function isInArray(string, array) {
     var cachePath;
     if (string.indexOf(self.origin) === 0) { // request targets domain where we serve the page from (i.e. NOT a CDN)
-        console.log('matched ', string);
         cachePath = string.substring(self.origin.length); // take the part of the URL AFTER the domain (e.g. after localhost:8080)
     } else {
         cachePath = string; // store the full request (for CDNs)
@@ -71,7 +70,7 @@ function isInArray(string, array) {
   }
 
 self.addEventListener('fetch', function(event) {
-    var url = 'https://httpbin.org/get';
+    var url = 'https://exchange-a-gram-a9533.firebaseio.com/posts.json';
 
     if (event.request.url.indexOf(url) > -1) {
         // cache then network strategy
