@@ -3,9 +3,9 @@ importScripts('/src/js/constants.js');
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v8';
-var CACHE_DYNAMIC_NAME = 'dynamic-v8';
-var STATIC_FILES = [
+const CACHE_STATIC_NAME = 'static-v8';
+const CACHE_DYNAMIC_NAME = 'dynamic-v8';
+const STATIC_FILES = [
     '/',
     '/index.html',
     '/offline.html',
@@ -25,7 +25,7 @@ var STATIC_FILES = [
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
 
-// var CACHE_LIMIT = 10;
+// const CACHE_LIMIT = 10;
 // function trimCache(cacheName, maxItems) {
 //     caches.open(cacheName)
 //         .then(function(cache) {
@@ -68,7 +68,7 @@ self.addEventListener('activate', function(event) {
 });
 
 function isInArray(string, array) {
-    var cachePath;
+    let cachePath;
     if (string.indexOf(self.origin) === 0) { // request targets domain where we serve the page from (i.e. NOT a CDN)
         cachePath = string.substring(self.origin.length); // take the part of the URL AFTER the domain (e.g. after localhost:8080)
     } else {
@@ -85,13 +85,13 @@ self.addEventListener('fetch', function(event) {
         event.respondWith(
             fetch(event.request)
                 .then(function(res) {
-                    var clonedRes = res.clone();
+                    const clonedRes = res.clone();
                     clearAllData('posts')
                         .then(function() {
                             return clonedRes.json();
                         })
                         .then(function(data) {
-                            for (var key in data) {
+                            for (let key in data) {
                                 writeData('posts', data[key]);
                             }
                         });
@@ -144,7 +144,7 @@ self.addEventListener('fetch', function(event) {
 
 self.addEventListener('sync', function(event) {
     console.log('[Service Worker] Background syncing', event);
-    var storeName = 'sync-posts';
+    const storeName = 'sync-posts';
     if (event.tag === 'sync-new-post') {
         console.log('[Service Worker] Syncing new posts');
         event.waitUntil(
