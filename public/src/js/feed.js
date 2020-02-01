@@ -130,7 +130,7 @@ function sendData() {
             id: new Date().toISOString(),
             title: titleInput.value,
             location: locationInput.value,
-            image: 'https://firebasestorage.googleapis.com/v0/b/exchange-a-gram-a9533.appspot.com/o/cat.jpg?alt=media&amp;token=771fd31b-2ae6-4541-b343-4689e214bdd4'
+            image: 'https://www.nationalgeographic.com/content/dam/yourshot/2014/05/3579113.jpg'
         })
     })
     .then(function(res) {
@@ -158,7 +158,7 @@ form.addEventListener('submit', function(event) {
                     id: new Date().toISOString(),
                     title: titleInput.value,
                     location: locationInput.value,
-                    image: 'https://firebasestorage.googleapis.com/v0/b/exchange-a-gram-a9533.appspot.com/o/cat.jpg?alt=media&amp;token=771fd31b-2ae6-4541-b343-4689e214bdd4'
+                    image: 'https://www.nationalgeographic.com/content/dam/yourshot/2014/05/3579113.jpg'
                 };
                 writeData('sync-posts', post)
                     .then(function() {
