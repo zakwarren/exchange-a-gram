@@ -120,7 +120,7 @@ if ('indexedDB' in window) {
 }
 
 function sendData() {
-    fetch(DATABASE_URL, {
+    fetch(POST_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

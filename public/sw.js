@@ -151,7 +151,7 @@ self.addEventListener('sync', function(event) {
             readAllData(storeName)
                 .then(function(data) {
                     for (let dt of data) {
-                        fetch(DATABASE_URL, {
+                        fetch(POST_URL, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
@@ -166,7 +166,10 @@ self.addEventListener('sync', function(event) {
                         })
                         .then(function(res) {
                             if (res.OK) {
-                                deleteItemFromData(storeName, dt.id);
+                                res.json()
+                                    .then(function(resData) {
+                                        deleteItemFromData(storeName, resData.id);
+                                    })
                             }
                         })
                         .catch(function(err) {
