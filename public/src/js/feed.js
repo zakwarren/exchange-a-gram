@@ -96,10 +96,9 @@ function getArrayFromObject(data) {
     return dataArray;
 }
 
-var url = 'https://exchange-a-gram-a9533.firebaseio.com/posts.json';
 var networkDataReceived = false;
 
-fetch(url)
+fetch(DATABASE_URL)
     .then(function(res) {
         return res.json();
     })
@@ -121,7 +120,7 @@ if ('indexedDB' in window) {
 }
 
 function sendData() {
-    fetch(url, {
+    fetch(DATABASE_URL, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

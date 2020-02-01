@@ -1,4 +1,5 @@
 
+importScripts('/src/js/constants.js');
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
@@ -12,6 +13,7 @@ var STATIC_FILES = [
     '/src/js/feed.js',
     '/src/js/promise.js',
     '/src/js/fetch.js',
+    '/src/js/constants.js',
     '/src/js/idb.js',
     '/src/js/utility.js',
     '/src/js/material.min.js',
@@ -22,7 +24,6 @@ var STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
-var url = 'https://exchange-a-gram-a9533.firebaseio.com/posts.json';
 
 // var CACHE_LIMIT = 10;
 // function trimCache(cacheName, maxItems) {
@@ -77,7 +78,7 @@ function isInArray(string, array) {
   }
 
 self.addEventListener('fetch', function(event) {
-    if (event.request.url.indexOf(url) > -1) {
+    if (event.request.url.indexOf(DATABASE_URL) > -1) {
         // indexedDB for post requests
         // get data from network then store it in indexedDB
         // for faster recall and offline support
@@ -150,7 +151,7 @@ self.addEventListener('sync', function(event) {
             readAllData(storeName)
                 .then(function(data) {
                     for (let dt of data) {
-                        fetch(url, {
+                        fetch(DATABASE_URL, {
                             method: 'POST',
                             headers: {
                                 'Content-Type': 'application/json',
