@@ -2,8 +2,8 @@
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-var CACHE_STATIC_NAME = 'static-v7';
-var CACHE_DYNAMIC_NAME = 'dynamic-v7';
+var CACHE_STATIC_NAME = 'static-v8';
+var CACHE_DYNAMIC_NAME = 'dynamic-v8';
 var STATIC_FILES = [
     '/',
     '/index.html',
@@ -22,6 +22,7 @@ var STATIC_FILES = [
     'https://fonts.googleapis.com/icon?family=Material+Icons',
     'https://cdnjs.cloudflare.com/ajax/libs/material-design-lite/1.3.0/material.indigo-pink.min.css'
 ];
+var url = 'https://exchange-a-gram-a9533.firebaseio.com/posts.json';
 
 // var CACHE_LIMIT = 10;
 // function trimCache(cacheName, maxItems) {
@@ -76,8 +77,6 @@ function isInArray(string, array) {
   }
 
 self.addEventListener('fetch', function(event) {
-    var url = 'https://exchange-a-gram-a9533.firebaseio.com/posts.json';
-
     if (event.request.url.indexOf(url) > -1) {
         // indexedDB for post requests
         // get data from network then store it in indexedDB
@@ -136,6 +135,42 @@ self.addEventListener('fetch', function(event) {
                                         }
                                     })
                             });
+                    }
+                })
+        );
+    }
+});
+
+self.addEventListener('sync', function(event) {
+    console.log('[Service Worker] Background syncing', event);
+    var storeName = 'sync-posts';
+    if (event.tag === 'sync-new-post') {
+        console.log('[Service Worker] Syncing new posts');
+        event.waitUntil(
+            readAllData(storeName)
+                .then(function(data) {
+                    for (let dt of data) {
+                        fetch(url, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                id: dt.id,
+                                title: dt.title,
+                                location: dt.location,
+                                image: dt.image
+                            })
+                        })
+                        .then(function(res) {
+                            if (res.OK) {
+                                deleteItemFromData(storeName, dt.id);
+                            }
+                        })
+                        .catch(function(err) {
+                            console.error('Error while sending data', err);
+                        })
                     }
                 })
         );
