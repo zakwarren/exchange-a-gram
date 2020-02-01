@@ -165,7 +165,7 @@ self.addEventListener('sync', function(event) {
                             })
                         })
                         .then(function(res) {
-                            if (res.OK) {
+                            if (res.ok) {
                                 res.json()
                                     .then(function(resData) {
                                         deleteItemFromData(storeName, resData.id);
