@@ -34,17 +34,24 @@ window.addEventListener('beforeinstallprompt', function(event) {
     return false;
 });
 
+function displayConfirmNotification() {
+    var options = {
+        body: 'You successfully subscribed to our notification service'
+    };
+    new Notification ('Successfully Subscribed!', options);
+}
+
 function askForNotificationPermission() {
     Notification.requestPermission()
         .then(function(result) {
             console.log('User choice:', result);
-            for (var i = 0; i < enableNotificationButtons.length; i ++) {
-                enableNotificationButtons[i].style.display = 'none';
-            }
+            // for (var i = 0; i < enableNotificationButtons.length; i ++) {
+            //     enableNotificationButtons[i].style.display = 'none';
+            // }
             if (result !== 'granted') {
                 console.log('No notification granted');
             } else {
-                //
+                displayConfirmNotification();
             }
         });
 }
