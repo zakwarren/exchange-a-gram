@@ -2,13 +2,14 @@ const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
 const serviceAccount = require('./key.json');
+const constants = require('./constants');
 
 // Create and Deploy Your First Cloud Functions
 // https://firebase.google.com/docs/functions/write-firebase-functions
 
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
-    databaseURL: 'https://exchange-a-gram-a9533.firebaseio.com/'
+    databaseURL: constants.databaseURL
 });
 
 exports.storePostData = functions.https.onRequest((request, response) => {
