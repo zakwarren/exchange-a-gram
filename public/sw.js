@@ -26,11 +26,11 @@ const STATIC_FILES = [
 ];
 
 // const CACHE_LIMIT = 10;
-// function trimCache(cacheName, maxItems) {
+// const trimCache = (cacheName, maxItems) => {
 //     caches.open(cacheName)
-//         .then(function(cache) {
+//         .then(cache => {
 //             return cache.keys()
-//                 .then(function(keys) {
+//                 .then(keys => {
 //                     if (keys.length > maxItems) {
 //                         cache.delete(keys[0])
 //                             .then(trimCache(cacheName, maxItems));
@@ -39,24 +39,24 @@ const STATIC_FILES = [
 //         });
 // }
 
-self.addEventListener('install', function(event) {
+self.addEventListener('install', event => {
     console.log('[Service worker] Installing Service Worker...', event);
     event.waitUntil(
         caches.open(CACHE_STATIC_NAME)
-            .then(function(cache) {
+            .then(cache => {
                 console.log('[Service worker] Pre-caching app shell');
                 cache.addAll(STATIC_FILES);
             })
     );
 });
 
-self.addEventListener('activate', function(event) {
+self.addEventListener('activate', event => {
     console.log('[Service worker] Activating Service Worker...', event);
     // trimCache(CACHE_DYNAMIC_NAME, CACHE_LIMIT);
     event.waitUntil(
         caches.keys()
-            .then(function(keyList) {
-                return Promise.all(keyList.map(function(key) {
+            .then(keyList => {
+                return Promise.all(keyList.map(key => {
                     if (key !== CACHE_STATIC_NAME && key !== CACHE_DYNAMIC_NAME) {
                         console.log('[Service worker] Removing old cache:', key);
                         return caches.delete(key);
@@ -67,7 +67,7 @@ self.addEventListener('activate', function(event) {
     return self.clients.claim();
 });
 
-function isInArray(string, array) {
+const isInArray = (string, array) => {
     let cachePath;
     if (string.indexOf(self.origin) === 0) { // request targets domain where we serve the page from (i.e. NOT a CDN)
         cachePath = string.substring(self.origin.length); // take the part of the URL AFTER the domain (e.g. after localhost:8080)
@@ -77,20 +77,20 @@ function isInArray(string, array) {
     return array.indexOf(cachePath) > -1;
   }
 
-self.addEventListener('fetch', function(event) {
+self.addEventListener('fetch', event => {
     if (event.request.url.indexOf(DATABASE_URL) > -1) {
         // indexedDB for post requests
         // get data from network then store it in indexedDB
         // for faster recall and offline support
         event.respondWith(
             fetch(event.request)
-                .then(function(res) {
+                .then(res => {
                     const clonedRes = res.clone();
                     clearAllData('posts')
-                        .then(function() {
+                        .then(() => {
                             return clonedRes.json();
                         })
-                        .then(function(data) {
+                        .then(data => {
                             for (let key in data) {
                                 writeData('posts', data[key]);
                             }
@@ -115,22 +115,22 @@ self.addEventListener('fetch', function(event) {
         // to cache responses the first time (or when service worker updated)
         event.respondWith(
             caches.match(event.request)
-                .then(function(response) {
+                .then(response => {
                     if (response) {
                         return response;
                     } else {
                         return fetch(event.request)
-                            .then(function(res) {
+                            .then(res => {
                                 return caches.open(CACHE_DYNAMIC_NAME)
-                                    .then(function(cache) {
+                                    .then(cache => {
                                         // trimCache(CACHE_DYNAMIC_NAME, CACHE_LIMIT);
                                         cache.put(event.request.url, res.clone());
                                         return res;
                                     });
                             })
-                            .catch(function(err) {
+                            .catch(err => {
                                 return caches.open(CACHE_STATIC_NAME)
-                                    .then(function(cache) {
+                                    .then(cache => {
                                         if (event.request.headers.get('accept').includes('text/html')) {
                                             return cache.match('/offline.html');
                                         }
@@ -142,14 +142,14 @@ self.addEventListener('fetch', function(event) {
     }
 });
 
-self.addEventListener('sync', function(event) {
+self.addEventListener('sync', event => {
     console.log('[Service Worker] Background syncing', event);
     const storeName = 'sync-posts';
     if (event.tag === 'sync-new-post') {
         console.log('[Service Worker] Syncing new posts');
         event.waitUntil(
             readAllData(storeName)
-                .then(function(data) {
+                .then(data => {
                     for (let dt of data) {
                         fetch(POST_URL, {
                             method: 'POST',
@@ -164,15 +164,15 @@ self.addEventListener('sync', function(event) {
                                 image: dt.image
                             })
                         })
-                        .then(function(res) {
+                        .then(res => {
                             if (res.ok) {
                                 res.json()
-                                    .then(function(resData) {
+                                    .then(resData => {
                                         deleteItemFromData(storeName, resData.id);
                                     })
                             }
                         })
-                        .catch(function(err) {
+                        .catch(err => {
                             console.error('Error while sending data', err);
                         })
                     }
