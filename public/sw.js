@@ -78,7 +78,7 @@ const isInArray = (string, array) => {
   }
 
 self.addEventListener('fetch', event => {
-    if (event.request.url.indexOf(DATABASE_URL) > -1) {
+    if (event.request.url.indexOf(DATABASE_URL + 'posts.json') > -1) {
         // indexedDB for post requests
         // get data from network then store it in indexedDB
         // for faster recall and offline support
