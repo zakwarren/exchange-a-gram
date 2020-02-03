@@ -98,7 +98,7 @@ function getArrayFromObject(data) {
 
 var networkDataReceived = false;
 
-fetch(DATABASE_URL)
+fetch(DATABASE_URL + 'posts.json')
     .then(function(res) {
         return res.json();
     })

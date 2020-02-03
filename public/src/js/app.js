@@ -53,10 +53,48 @@ function displayConfirmNotification() {
         };
         navigator.serviceWorker.ready
             .then(function(swreg) {
-                swreg.showNotification('Successfully Subscribed (via SW)!', options);
+                swreg.showNotification('Successfully Subscribed!', options);
             });
     }
     // new Notification('Successfully Subscribed!', options);
+}
+
+function configurePushSub() {
+    if (!('serviceWorker' in navigator)) { return; }
+
+    var reg;
+    navigator.serviceWorker.ready
+        .then(function(swreg) {
+            reg = swreg;
+            return swreg.pushManager.getSubscription();
+        })
+        .then(function(sub) {
+            if (sub === null) {
+                var convertedVapidPublicKey = urlBase64ToUint8Array(VAPID_PUBLIC_KEY);
+                return reg.pushManager.subscribe({
+                    userVisibleOnly: true,
+                    applicationServerKey: convertedVapidPublicKey
+                });
+            }
+        })
+        .then(function(newSub) {
+            return fetch(DATABASE_URL + 'subscriptions.json', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify(newSub)
+            });
+        })
+        .then(function(res) {
+            if (res.ok) {
+                displayConfirmNotification();
+            }
+        })
+        .catch(function(err) {
+            console.error(err);
+        });
 }
 
 function askForNotificationPermission() {
@@ -69,12 +107,12 @@ function askForNotificationPermission() {
             if (result !== 'granted') {
                 console.log('No notification granted');
             } else {
-                displayConfirmNotification();
+                configurePushSub();
             }
         });
 }
 
-if ('Notification' in window) {
+if ('Notification' in window && 'serviceWorker' in navigator) {
     for (var i = 0; i < enableNotificationButtons.length; i ++) {
         enableNotificationButtons[i].style.display = 'inline-block';
         enableNotificationButtons[i].addEventListener('click', askForNotificationPermission);
