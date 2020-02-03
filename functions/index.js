@@ -1,6 +1,7 @@
 const functions = require('firebase-functions');
 const admin = require('firebase-admin');
 const cors = require('cors')({ origin: true });
+const webpush = require('web-push');
 const serviceAccount = require('./key.json');
 const constants = require('./constants');
 
@@ -21,6 +22,30 @@ exports.storePostData = functions.https.onRequest((request, response) => {
             image: request.body.image
         })
         .then(() => {
+            webpush.setVapidDetails(
+                'mailto:' + constants.email,
+                constants.webPushPublicKey,
+                constants.webPushPrivateKey
+            );
+            return admin.database().ref('subscriptions').once('value');
+        })
+        .then(subscriptions => {
+            subscriptions.forEach(sub => {
+                const pushConfig = {
+                    endpoint: sub.val().endpoint,
+                    keys: {
+                        auth: sub.val().keys.auth,
+                        p256dh: sub.val().keys.p256dh
+                    }
+                };
+
+                webpush.sendNotification(pushConfig, JSON.stringify({
+                    title: 'New Post',
+                    content: 'New post created'
+                }))
+                .catch(err => console.log(err));
+            });
+
             return response.status(201).json({
                 message: 'Data stored',
                 id: request.body.id
