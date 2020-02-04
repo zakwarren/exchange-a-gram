@@ -184,8 +184,8 @@ self.addEventListener('sync', event => {
 });
 
 self.addEventListener('notificationclick', event => {
-    var notification = event.notification;
-    var action = event.action;
+    const notification = event.notification;
+    const action = event.action;
 
     console.log(notification);
 
@@ -200,10 +200,10 @@ self.addEventListener('notificationclick', event => {
                         return c.visibilityState === 'visible';
                     });
                     if (client !== undefined) {
-                        client.navigate(ROOT_PAGE);
+                        client.navigate(notification.data.url);
                         client.focus();
                     } else {
-                        clients.openWindow(ROOT_PAGE);
+                        clients.openWindow(notification.data.url);
                     }
                 })
         );
@@ -218,16 +218,19 @@ self.addEventListener('notificationclose', event => {
 self.addEventListener('push', event => {
     console.log('Push notification received', event);
 
-    var data = { title: 'New', content: 'Something new occurred' };
+    let data = { title: 'New', content: 'Something new occurred', openUrl: '/' };
     if (event.data) {
         data = JSON.parse(event.data.text());
     }
 
-    var options = {
+    const options = {
         body: data.content,
         icon: '/src/images/icons/app-icon-96x96.png',
         badge: '/src/images/icons/app-icon-96x96.png',
-        vibrate: [100, 50, 200]
+        vibrate: [100, 50, 200],
+        data: {
+            url: data.openUrl
+        }
     };
     event.waitUntil(
         self.registration.showNotification(data.title, options)
