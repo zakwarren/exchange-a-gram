@@ -3,12 +3,14 @@ importScripts('/src/js/constants.js');
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v8';
-const CACHE_DYNAMIC_NAME = 'dynamic-v8';
+const CACHE_STATIC_NAME = 'static-v9';
+const CACHE_DYNAMIC_NAME = 'dynamic-v9';
 const STATIC_FILES = [
     '/',
     '/index.html',
     '/offline.html',
+    '/404.html',
+    '/manifest.json',
     '/src/js/app.js',
     '/src/js/feed.js',
     '/src/js/promise.js',
@@ -212,7 +214,8 @@ self.addEventListener('push', event => {
     var options = {
         body: data.content,
         icon: '/src/images/icons/app-icon-96x96.png',
-        badge: '/src/images/icons/app-icon-96x96.png'
+        badge: '/src/images/icons/app-icon-96x96.png',
+        vibrate: [100, 50, 200]
     };
     event.waitUntil(
         self.registration.showNotification(data.title, options)
