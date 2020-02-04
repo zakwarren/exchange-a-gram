@@ -189,12 +189,24 @@ self.addEventListener('notificationclick', event => {
 
     console.log(notification);
 
-    if (action === 'confirm') {
-        console.log('Confirm was chosen');
-    } else if (action === 'cancel') {
+    if (action === 'cancel') {
         console.log('Cancel was chosen');
     } else {
-        console.log(action);
+        console.log(action + ' was chosen');
+        event.waitUntil(
+            clients.matchAll()
+                .then(clis => {
+                    const client = clis.find(c => {
+                        return c.visibilityState === 'visible';
+                    });
+                    if (client !== undefined) {
+                        client.navigate(ROOT_PAGE);
+                        client.focus();
+                    } else {
+                        clients.openWindow(ROOT_PAGE);
+                    }
+                })
+        );
     }
     notification.close();
 });
