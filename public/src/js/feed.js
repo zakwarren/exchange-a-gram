@@ -43,6 +43,24 @@ function initializeMedia() {
         });
 }
 
+captureBtn.addEventListener('click', function(event) {
+    canvasElement.style.display = 'block';
+    videoPlayer.style.display = 'none';
+    captureBtn.style.display = 'none';
+
+    var context = canvasElement.getContext('2d');
+    context.drawImage(
+        videoPlayer,
+        0,
+        0,
+        canvasElement.width,
+        videoPlayer.videoHeight / (videoPlayer.videoWidth / canvasElement.width)
+    );
+    videoPlayer.srcObject.getVideoTracks().forEach(function(track) {
+        track.stop();
+    });
+});
+
 function openCreatePostModal() {
     createPostArea.style.transform = 'translateY(0)';
     initializeMedia();
