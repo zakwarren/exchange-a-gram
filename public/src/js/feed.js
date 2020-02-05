@@ -8,9 +8,36 @@ var form = document.querySelector('form');
 var titleInput = document.querySelector('#title');
 var locationInput = document.querySelector('#location');
 var snackbarContainer = document.querySelector('#confirmation-toast');
+var videoPlayer = document.querySelector('#player');
+var canvasElement = document.querySelector('#canvas');
+var captureBtn = document.querySelector('#capture-btn');
+var imagePicker = document.querySelector('#image-picker');
+var imagePickerArea = document.querySelector('#pick-image');
+
+function initializeMedia() {
+    if (!('mediaDevices' in navigator)) {
+        navigator.mediaDevices = {};
+    }
+
+    if (!('getUserMedia' in navigator.mediaDevices)) {
+        navigator.mediaDevices.getUserMedia = function(constraints) {
+            var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+
+            if (!getUserMedia) {
+                return Promise.reject(new Error('getUserMedia is not implemented'));
+            }
+
+            return new Promise(function(resolve, reject) {
+                getUserMedia.call(navigator, constraints, resolve, reject);
+            });
+        }
+    }
+}
 
 function openCreatePostModal() {
     createPostArea.style.transform = 'translateY(0)';
+    initializeMedia();
+
     if (deferredPrompt) {
         deferredPrompt.prompt();
 
