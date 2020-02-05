@@ -14,24 +14,33 @@ var captureBtn = document.querySelector('#capture-btn');
 var imagePicker = document.querySelector('#image-picker');
 var imagePickerArea = document.querySelector('#pick-image');
 
-function initializeMedia() {
-    if (!('mediaDevices' in navigator)) {
-        navigator.mediaDevices = {};
-    }
+if (!('mediaDevices' in navigator)) {
+    navigator.mediaDevices = {};
+}
 
-    if (!('getUserMedia' in navigator.mediaDevices)) {
-        navigator.mediaDevices.getUserMedia = function(constraints) {
-            var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
+if (!('getUserMedia' in navigator.mediaDevices)) {
+    navigator.mediaDevices.getUserMedia = function(constraints) {
+        var getUserMedia = navigator.webkitGetUserMedia || navigator.mozGetUserMedia;
 
-            if (!getUserMedia) {
-                return Promise.reject(new Error('getUserMedia is not implemented'));
-            }
-
-            return new Promise(function(resolve, reject) {
-                getUserMedia.call(navigator, constraints, resolve, reject);
-            });
+        if (!getUserMedia) {
+            return Promise.reject(new Error('getUserMedia is not implemented'));
         }
+
+        return new Promise(function(resolve, reject) {
+            getUserMedia.call(navigator, constraints, resolve, reject);
+        });
     }
+}
+
+function initializeMedia() {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: false })
+        .then(function(stream) {
+            videoPlayer.srcObject = stream;
+            videoPlayer.style.display = 'block';
+        })
+        .catch(function(err) {
+            imagePickerArea.style.display = 'block';
+        });
 }
 
 function openCreatePostModal() {
@@ -57,6 +66,9 @@ function openCreatePostModal() {
 
 function closeCreatePostModal() {
     createPostArea.style.transform = 'translateY(100vh)';
+    imagePickerArea.style.display = 'none';
+    videoPlayer.style.display = 'none';
+    canvasElement.style.display = 'none';
 }
 
 shareImageButton.addEventListener('click', openCreatePostModal);
