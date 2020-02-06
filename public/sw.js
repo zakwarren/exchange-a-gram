@@ -153,18 +153,15 @@ self.addEventListener('sync', event => {
             readAllData(storeName)
                 .then(data => {
                     for (let dt of data) {
+                        const postData = new FormData();
+                        postData.append('id', dt.id);
+                        postData.append('title', dt.title);
+                        postData.append('location', dt.location);
+                        postData.append('file', dt.picture, dt.id + '.png');
+
                         fetch(POST_URL, {
                             method: 'POST',
-                            headers: {
-                                'Content-Type': 'application/json',
-                                'Accept': 'application/json'
-                            },
-                            body: JSON.stringify({
-                                id: dt.id,
-                                title: dt.title,
-                                location: dt.location,
-                                image: dt.image
-                            })
+                            body: postData
                         })
                         .then(res => {
                             if (res.ok) {

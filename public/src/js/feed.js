@@ -13,6 +13,7 @@ var canvasElement = document.querySelector('#canvas');
 var captureBtn = document.querySelector('#capture-btn');
 var imagePicker = document.querySelector('#image-picker');
 var imagePickerArea = document.querySelector('#pick-image');
+var picture;
 
 if (!('mediaDevices' in navigator)) {
     navigator.mediaDevices = {};
@@ -59,6 +60,7 @@ captureBtn.addEventListener('click', function(event) {
     videoPlayer.srcObject.getVideoTracks().forEach(function(track) {
         track.stop();
     });
+    picture = dataURItoBlob(canvasElement.toDataURL());
 });
 
 function openCreatePostModal() {
@@ -177,18 +179,16 @@ if ('indexedDB' in window) {
 }
 
 function sendData() {
+    var id = new Date().toISOString();
+    var postData = new FormData();
+    postData.append('id', id);
+    postData.append('title', titleInput.value);
+    postData.append('location', locationInput.value);
+    postData.append('file', picture, id + '.png');
+
     fetch(POST_URL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-        },
-        body: JSON.stringify({
-            id: new Date().toISOString(),
-            title: titleInput.value,
-            location: locationInput.value,
-            image: 'https://www.nationalgeographic.com/content/dam/yourshot/2014/05/3579113.jpg'
-        })
+        body: postData
     })
     .then(function(res) {
         console.log('Sent data', res);
@@ -215,7 +215,7 @@ form.addEventListener('submit', function(event) {
                     id: new Date().toISOString(),
                     title: titleInput.value,
                     location: locationInput.value,
-                    image: 'https://www.nationalgeographic.com/content/dam/yourshot/2014/05/3579113.jpg'
+                    picture: picture
                 };
                 writeData('sync-posts', post)
                     .then(function() {
