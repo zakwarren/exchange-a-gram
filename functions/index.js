@@ -44,13 +44,13 @@ exports.storePostData = functions.https.onRequest((request, response) => {
         });
 
         // This will invoked on every field detected
-        busboy.on('field', function(fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) {
+        busboy.on('field', (fieldname, val, fieldnameTruncated, valTruncated, encoding, mimetype) => {
             fields[fieldname] = val;
         });
 
         // This callback will be invoked after all uploaded files are saved.
         busboy.on("finish", () => {
-            var bucket = gcs.bucket("YOUR_PROJECT_ID.appspot.com");
+            const bucket = gcs.bucket("YOUR_PROJECT_ID.appspot.com");
             bucket.upload(
             upload.file,
             {
