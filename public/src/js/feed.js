@@ -23,6 +23,7 @@ locationBtn.addEventListener('click', function(event) {
     if (!('geolocation' in navigator)) {
         return;
     }
+    var sawAlert = false;
 
     locationBtn.style.display = 'none';
     locationLoader.style.display = 'block';
@@ -40,8 +41,11 @@ locationBtn.addEventListener('click', function(event) {
         console.log(err);
         locationBtn.style.display = 'inline';
         locationLoader.style.display = 'none';
-        fetchedLocation = { lat: null, lng: null };
-        alert('Couldn\'t find location, please enter manually');
+        fetchedLocation = { lat: 0, lng: 0 };
+        if (!sawAlert) {
+            sawAlert = true;
+            alert('Couldn\'t find location, please enter manually');
+        }
     }, { timeout: 7000 });
 });
 
@@ -233,6 +237,7 @@ function sendData() {
     var postData = new FormData();
     postData.append('id', id);
     postData.append('title', titleInput.value);
+    postData.append('location', locationInput.value);
     postData.append('rawLocationLat', fetchedLocation.lat);
     postData.append('rawLocationLng', fetchedLocation.lng);
     postData.append('file', picture, id + '.png');
@@ -266,8 +271,8 @@ form.addEventListener('submit', function(event) {
                     id: new Date().toISOString(),
                     title: titleInput.value,
                     location: locationInput.value,
-                    picture: picture,
-                    rawLocation: fetchedLocation
+                    rawLocation: fetchedLocation,
+                    picture: picture
                 };
                 writeData('sync-posts', post)
                     .then(function() {
