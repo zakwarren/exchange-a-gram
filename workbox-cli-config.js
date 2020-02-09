@@ -10,6 +10,7 @@ module.exports = {
   "globIgnores": [
     "..\\workbox-cli-config.js",
     "help/**",
+    "404.html",
     "sw-base.js",
     "service-worker.js"
   ]
