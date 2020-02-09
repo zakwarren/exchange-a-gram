@@ -1,7 +1,7 @@
 importScripts('workbox-sw.prod.v2.1.3.js');
 importScripts('/src/js/constants.js');
-importScripts('/src/js/idb.js');
-importScripts('/src/js/utility.js');
+importScripts('/src/js/idb.min.js');
+importScripts('/src/js/utility.min.js');
 
 const workboxSW = new self.WorkboxSW();
 

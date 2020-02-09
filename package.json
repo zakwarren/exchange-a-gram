@@ -5,8 +5,10 @@
   "main": "index.js",
   "scripts": {
     "start": "http-server -c-1",
+    "minify": "uglifyjs public/src/js/app.js -o public/src/js/app.min.js --compress --mangle && uglifyjs public/src/js/constants.js -o public/src/js/constants.min.js --compress --mangle && uglifyjs public/src/js/feed.js -o public/src/js/feed.min.js --compress --mangle && uglifyjs public/src/js/fetch.js -o public/src/js/fetch.min.js --compress --mangle && uglifyjs public/src/js/idb.js -o public/src/js/idb.min.js --compress --mangle && uglifyjs public/src/js/promise.js -o public/src/js/promise.min.js --compress --mangle && uglifyjs public/src/js/utility.js -o public/src/js/utility.min.js --compress --mangle",
     "generate-sw": "npx -p node@8.3.0 workbox generate:sw",
-    "inject-sw": "npx -p node@8.3.0 workbox inject:manifest"
+    "inject-sw": "npx -p node@8.3.0 workbox inject:manifest",
+    "build": "npm run minify && npm run inject-sw"
   },
   "keywords": [
     "pwa",
@@ -21,6 +23,7 @@
   "license": "ISC",
   "devDependencies": {
     "http-server": "^0.10.0",
+    "uglify-js": "^3.7.7",
     "workbox-cli": "^2.1.3"
   }
 }
