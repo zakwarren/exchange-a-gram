@@ -1,23 +1,7 @@
 importScripts('workbox-sw.prod.v2.1.3.js');
 
-/**
- * DO NOT EDIT THE FILE MANIFEST ENTRY
- *
- * The method precache() does the following:
- * 1. Cache URLs in the manifest to a local cache.
- * 2. When a network request is made for any of these URLs the response
- *    will ALWAYS comes from the cache, NEVER the network.
- * 3. When the service worker changes ONLY assets with a revision change are
- *    updated, old cache entries are left as is.
- *
- * By changing the file manifest manually, your users may end up not receiving
- * new versions of files because the revision hasn't changed.
- *
- * Please use workbox-build or some other tool / approach to generate the file
- * manifest which accounts for changes to local files and update the revision
- * accordingly.
- */
-const fileManifest = [
+const workboxSW = new self.WorkboxSW();
+workboxSW.precache([
   {
     "url": "404.html",
     "revision": "7f12f75f31877bf58459dbd43c7029dd"
@@ -83,8 +67,16 @@ const fileManifest = [
     "revision": "d50ef8d7ab415ff97a54b745db0378d7"
   },
   {
+    "url": "sw-base.js",
+    "revision": "bd13acf5c3da7051aab0c1599f9957fb"
+  },
+  {
     "url": "sw.js",
     "revision": "930e242258357dc0d77446cf40fd534c"
+  },
+  {
+    "url": "workbox-sw.prod.v2.1.3.js",
+    "revision": "a9890beda9e5f17e4c68f42324217941"
   },
   {
     "url": "src/images/main-image-lg.jpg",
@@ -102,7 +94,4 @@ const fileManifest = [
     "url": "src/images/sf-boat.jpg",
     "revision": "0f282d64b0fb306daf12050e812d6a19"
   }
-];
-
-const workboxSW = new self.WorkboxSW();
-workboxSW.precache(fileManifest);
+]);

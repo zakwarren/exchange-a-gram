@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "http-server -c-1",
-    "generate-sw": "npx -p node@8.3.0 workbox generate:sw"
+    "generate-sw": "npx -p node@8.3.0 workbox generate:sw",
+    "inject-sw": "npx -p node@8.3.0 workbox inject:manifest"
   },
   "keywords": [
     "pwa",
