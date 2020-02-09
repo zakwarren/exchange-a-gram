@@ -17,7 +17,7 @@ var picture;
 var locationBtn = document.querySelector('#location-btn');
 var locationLoader = document.querySelector('#location-loader');
 var manualLocation = document.querySelector('#manual-location');
-var fetchedLocation;
+var fetchedLocation = { lat: 0, lng: 0 };
 
 locationBtn.addEventListener('click', function(event) {
     if (!('geolocation' in navigator)) {
@@ -133,6 +133,7 @@ function closeCreatePostModal() {
     imagePickerArea.style.display = 'none';
     videoPlayer.style.display = 'none';
     canvasElement.style.display = 'none';
+    captureBtn.style.display = 'inline';
     locationBtn.style.display = 'inline';
     locationLoader.style.display = 'none';
     if (videoPlayer.srcObject) {
