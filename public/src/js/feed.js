@@ -41,6 +41,7 @@ function initializeMedia() {
         })
         .catch(function(err) {
             imagePickerArea.style.display = 'block';
+            captureBtn.style.display = 'none';
         });
 }
 
@@ -61,6 +62,10 @@ captureBtn.addEventListener('click', function(event) {
         track.stop();
     });
     picture = dataURItoBlob(canvasElement.toDataURL());
+});
+
+imagePicker.addEventListener('change', function(event) {
+    picture = event.target.files[0];
 });
 
 function openCreatePostModal() {
