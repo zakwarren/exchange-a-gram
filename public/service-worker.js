@@ -155,6 +155,10 @@ workboxSW.precache([
   {
     "url": "src/js/utility.min.js",
     "revision": "e3ff6635ddde4802a93301ea01d9ada5"
+  },
+  {
+    "url": "workbox-sw.prod.v2.1.3.js",
+    "revision": "a9890beda9e5f17e4c68f42324217941"
   }
 ]);
 
