@@ -141,6 +141,8 @@ function closeCreatePostModal() {
             track.stop();
         });
     }
+    titleInput.value = '';
+    locationInput.value = '';
     setTimeout(function() {
         createPostArea.style.transform = 'translateY(100vh)';
     }, 1);
