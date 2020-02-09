@@ -3,8 +3,8 @@ importScripts('/src/js/constants.js');
 importScripts('/src/js/idb.js');
 importScripts('/src/js/utility.js');
 
-const CACHE_STATIC_NAME = 'static-v9';
-const CACHE_DYNAMIC_NAME = 'dynamic-v9';
+const CACHE_STATIC_NAME = 'static-v1';
+const CACHE_DYNAMIC_NAME = 'dynamic-v1';
 const STATIC_FILES = [
     '/',
     '/index.html',
@@ -13,6 +13,7 @@ const STATIC_FILES = [
     '/manifest.json',
     '/src/js/app.js',
     '/src/js/feed.js',
+    '/src/js/utility.js',
     '/src/js/promise.js',
     '/src/js/fetch.js',
     '/src/js/constants.js',
