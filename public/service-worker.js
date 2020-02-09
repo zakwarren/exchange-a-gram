@@ -50,6 +50,35 @@ workboxSW.router.registerRoute(
     })
 );
 
+workboxSW.router.registerRoute(
+    routeData => {
+        return (routeData.event.request.headers.get('accept').includes('text/html'));
+    },
+    args => {
+        return caches.match(args.event.request)
+            .then(response => {
+                if (response) {
+                    return response;
+                } else {
+                    return fetch(args.event.request)
+                        .then(res => {
+                            return caches.open('dynamic')
+                                .then(cache => {
+                                    cache.put(args.event.request.url, res.clone());
+                                    return res;
+                                });
+                        })
+                        .catch(() => {
+                            return caches.match('/offline.html')
+                                .then(res => {
+                                    return res;
+                                });
+                        });
+                }
+            })
+    }
+);
+
 workboxSW.precache([
   {
     "url": "404.html",
