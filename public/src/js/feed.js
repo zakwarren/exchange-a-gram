@@ -14,6 +14,40 @@ var captureBtn = document.querySelector('#capture-btn');
 var imagePicker = document.querySelector('#image-picker');
 var imagePickerArea = document.querySelector('#pick-image');
 var picture;
+var locationBtn = document.querySelector('#location-btn');
+var locationLoader = document.querySelector('#location-loader');
+var manualLocation = document.querySelector('#manual-location');
+var fetchedLocation;
+
+locationBtn.addEventListener('click', function(event) {
+    if (!('geolocation' in navigator)) {
+        return;
+    }
+
+    locationBtn.style.display = 'none';
+    locationLoader.style.display = 'block';
+
+    navigator.geolocation.getCurrentPosition(function(position) {
+        locationBtn.style.display = 'inline';
+        locationLoader.style.display = 'none';
+        fetchedLocation = {
+            lat: position.coords.latitude,
+            lng: position.coords.longitude
+        };
+        locationInput.value = 'Lat: ' + fetchedLocation.lat + ' | Long: ' + fetchedLocation.lng;
+        manualLocation.classList.add('is-focused');
+    }, function(err) {
+        console.log(err);
+        locationBtn.style.display = 'inline';
+        locationLoader.style.display = 'none';
+        fetchedLocation = { lat: null, lng: null };
+        alert('Couldn\'t find location, please enter manually');
+    }, { timeout: 7000 });
+});
+
+if (!('geolocation' in navigator)) {
+    locationBtn.style.display = 'none';
+}
 
 if (!('mediaDevices' in navigator)) {
     navigator.mediaDevices = {};
@@ -94,6 +128,8 @@ function closeCreatePostModal() {
     imagePickerArea.style.display = 'none';
     videoPlayer.style.display = 'none';
     canvasElement.style.display = 'none';
+    locationBtn.style.display = 'inline';
+    locationLoader.style.display = 'none';
 }
 
 shareImageButton.addEventListener('click', openCreatePostModal);
@@ -188,7 +224,8 @@ function sendData() {
     var postData = new FormData();
     postData.append('id', id);
     postData.append('title', titleInput.value);
-    postData.append('location', locationInput.value);
+    postData.append('rawLocationLat', fetchedLocation.lat);
+    postData.append('rawLocationLng', fetchedLocation.lng);
     postData.append('file', picture, id + '.png');
 
     fetch(POST_URL, {
@@ -220,7 +257,8 @@ form.addEventListener('submit', function(event) {
                     id: new Date().toISOString(),
                     title: titleInput.value,
                     location: locationInput.value,
-                    picture: picture
+                    picture: picture,
+                    rawLocation: fetchedLocation
                 };
                 writeData('sync-posts', post)
                     .then(function() {
