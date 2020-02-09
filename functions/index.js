@@ -15,8 +15,6 @@ const constants = require('./constants');
 // // https://firebase.google.com/docs/functions/write-firebase-functions
 //
 
-const serviceAccount = require("./pwagram-fb-key.json");
-
 const gcconfig = {
   projectId: constants.projectId,
   keyFilename: 'key.json'
