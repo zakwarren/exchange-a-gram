@@ -86,7 +86,7 @@ workboxSW.precache([
   },
   {
     "url": "index.html",
-    "revision": "c49ecb4aee51b68a7d46944060ef93ce"
+    "revision": "f515da06a066afb893654951feb69b22"
   },
   {
     "url": "manifest.json",
@@ -94,7 +94,7 @@ workboxSW.precache([
   },
   {
     "url": "offline.html",
-    "revision": "439bf5b947a769c47f25d965e08db587"
+    "revision": "d9d950f15b6c10856725c289fd8e1bd7"
   },
   {
     "url": "src/css/app.css",
