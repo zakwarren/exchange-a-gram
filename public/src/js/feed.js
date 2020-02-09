@@ -103,7 +103,9 @@ imagePicker.addEventListener('change', function(event) {
 });
 
 function openCreatePostModal() {
-    createPostArea.style.transform = 'translateY(0)';
+    setTimeout(function() {
+        createPostArea.style.transform = 'translateY(0)';
+    }, 1);
     initializeMedia();
 
     if (deferredPrompt) {
@@ -124,12 +126,19 @@ function openCreatePostModal() {
 }
 
 function closeCreatePostModal() {
-    createPostArea.style.transform = 'translateY(100vh)';
     imagePickerArea.style.display = 'none';
     videoPlayer.style.display = 'none';
     canvasElement.style.display = 'none';
     locationBtn.style.display = 'inline';
     locationLoader.style.display = 'none';
+    if (videoPlayer.srcObject) {
+        videoPlayer.srcObject.getVideoTracks().forEach(function(track) {
+            track.stop();
+        });
+    }
+    setTimeout(function() {
+        createPostArea.style.transform = 'translateY(100vh)';
+    }, 1);
 }
 
 shareImageButton.addEventListener('click', openCreatePostModal);
